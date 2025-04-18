@@ -92,16 +92,10 @@ endin
     }
     async function updateEquation() {
       fact = ""
-      if (ctr3 != 0) {
+      if (ctr11 != 0) {
         if (fact != "") fact += " \\cdot ";
-        fact += "{ \\color{salmon} 3";
-        if (ctr3 != 1) fact += `^{${ctr3}}`;
-        fact += " } "
-      }
-      if (ctr5 != 0) {
-        if (fact != "") fact += " \\cdot ";
-        fact += "{ \\color{lightgreen} 5";
-        if (ctr5 != 1) fact += `^{${ctr5}}`;
+        fact += "{ \\color{khaki} 11";
+        if (ctr11 != 1) fact += `^{${ctr11}}`;
         fact += " } "
       }
       if (ctr7 != 0) {
@@ -110,10 +104,16 @@ endin
         if (ctr7 != 1) fact += `^{${ctr7}}`;
         fact += " } "
       }
-      if (ctr11 != 0) {
+      if (ctr5 != 0) {
         if (fact != "") fact += " \\cdot ";
-        fact += "{ \\color{khaki} 11";
-        if (ctr11 != 1) fact += `^{${ctr11}}`;
+        fact += "{ \\color{lightgreen} 5";
+        if (ctr5 != 1) fact += `^{${ctr5}}`;
+        fact += " } "
+      }
+      if (ctr3 != 0) {
+        if (fact != "") fact += " \\cdot ";
+        fact += "{ \\color{salmon} 3";
+        if (ctr3 != 1) fact += `^{${ctr3}}`;
         fact += " } "
       }
       if (ctr2 != 0) {
