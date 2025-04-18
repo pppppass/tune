@@ -4,7 +4,7 @@
   <title>Pitch</title>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.min.js"></script>
   <script type="text/javascript">
-    const initFreq = 440;
+    const initFreq = 441;
 
     let csound = null;
 
@@ -30,28 +30,67 @@ endin
   <style>
     body {
       margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: color-mix(in srgb, black 75%, grey 25%);
+      overflow: hidden;
+    }
+    #equation {
+      display: flex;
+      font-size: 4em;
+      height: 6em;
+      align-items: center;
+      justify-content: center;
+      color: lightgrey;
+    }
+    .button-row {
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      font-family: sans-serif;
-      background-color: color-mix(in srgb, black 75%, grey 25%);
     }
-    #equation {
-      font-size: 2em;
-      color: lightgrey;
+    .square-button {
+      width: 12em;
+      height: 12em;
+      border: none;
+      border-radius: 2px;
+      box-shadow: 3px 5px 16px 2px grey;
+      transition: transform 0.1s ease, box-shadow 0.2s ease;
+      margin: 2px;
+    }
+    .square-button:hover {
+      transform: scale(1.05);
+    }
+    .square-button:active {
+      transform: scale(0.95);
     }
   </style>
 </head>
 <body>
   <div id="equation"></div>
+  <div class="button-row">
+    <button id="add11" class="square-button" style="background-color: khaki;" onclick="processInput({key: 'a'})"></button>
+    <button id="add7" class="square-button" style="background-color: mediumpurple;" onclick="processInput({key: 's'})"></button>
+    <button id="add5" class="square-button" style="background-color: lightgreen;" onclick="processInput({key: 'd'})"></button>
+    <button id="add3" class="square-button" style="background-color: salmon;" onclick="processInput({key: 'f'})"></button>
+    <button id="add2" class="square-button" style="background-color: lightgrey;" onclick="processInput({key: 'g'})"></button>
+  <!-- </div> -->
+  <!-- <div class="button-row"> -->
+    <button id="sub2" class="square-button" style="background-color: lightgrey;" onclick="processInput({key: 'h'})"></button>
+    <!-- <button id="sub3" class="square-button" style="background-color: salmon;"></button>
+    <button id="sub5" class="square-button" style="background-color: lightgreen;"></button>
+    <button id="sub7" class="square-button" style="background-color: mediumpurple;"></button>
+    <button id="sub11" class="square-button" style="background-color: khaki;"></button> -->
+  </div>
   <script>
     let freq = initFreq;
     let ctr2 = 0, ctr3 = 0, ctr5 = 0, ctr7 = 0, ctr11 = 0;
-    function playSound() {
-      csound.inputMessage(`i 1 0 30 ${freq.toFixed(2)} 4`);
+    async function playSound() {
+      await csound.inputMessage(`i 1 0 30 ${freq.toFixed(2)} 4`);
     }
-    function updateEquation() {
+    async function updateEquation() {
       fact = ""
       if (ctr3 != 0) {
         if (fact != "") fact += " \\cdot ";
@@ -86,11 +125,14 @@ endin
       if (fact == "")
         fact += "1";
       eq = `$$ \\frac{${freq.toFixed(2)}}{${initFreq.toFixed(0)}} = ${fact} $$`;
-      document.getElementById("equation").innerHTML = eq;
-      MathJax.typesetPromise();
+      element = document.getElementById("equation");
+      element.innerHTML = eq;
+      element.style.visibility = "hidden";
+      await MathJax.typesetPromise();
+      element.style.visibility = "visible";
     }
     updateEquation();
-    document.addEventListener("keydown", async (event) => {
+    async function processInput(event) {
       if (csound == null) {
         const { Csound } = await import("https://cdn.jsdelivr.net/npm/@csound/browser@6.18.7/+esm");
         csound = await Csound();
@@ -138,9 +180,10 @@ endin
         freq *= 8.0/11.0;
         ctr11 -= 1; ctr2 += 3;
       }
-      playSound();
-      updateEquation();
-    });
+      await playSound();
+      await updateEquation();
+    }
+    document.addEventListener("keydown", processInput);
   </script>
   </body>
 </html>
