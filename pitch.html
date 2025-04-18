@@ -4,7 +4,7 @@
   <title>Pitch</title>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.min.js"></script>
   <script type="text/javascript">
-    const initFreq = 441;
+    const initFreq = 441, dispFreq = 440;
 
     let csound = null;
 
@@ -71,27 +71,35 @@ endin
 <body>
   <div id="equation"></div>
   <div class="button-row">
+    <button id="add13" class="square-button" style="background-color: lightskyblue;" onclick="processInput({key: 'q'})"></button>
     <button id="add11" class="square-button" style="background-color: khaki;" onclick="processInput({key: 'a'})"></button>
-    <button id="add7" class="square-button" style="background-color: mediumpurple;" onclick="processInput({key: 's'})"></button>
+    <button id="add7" class="square-button" style="background-color: plum;" onclick="processInput({key: 's'})"></button>
     <button id="add5" class="square-button" style="background-color: lightgreen;" onclick="processInput({key: 'd'})"></button>
     <button id="add3" class="square-button" style="background-color: salmon;" onclick="processInput({key: 'f'})"></button>
     <button id="add2" class="square-button" style="background-color: lightgrey;" onclick="processInput({key: 'g'})"></button>
-  <!-- </div> -->
-  <!-- <div class="button-row"> -->
+  </div>
+  <div class="button-row">
+    <button id="sub13" class="square-button" style="background-color: lightskyblue; visibility: hidden;" onclick="processInput({key: 'p'})"></button>
+    <button id="sub11" class="square-button" style="background-color: khaki; visibility: hidden;" onclick="processInput({key: ';'})"></button>
+    <button id="sub7" class="square-button" style="background-color: plum; visibility: hidden;" onclick="processInput({key: 'l'})"></button>
+    <button id="sub5" class="square-button" style="background-color: lightgreen; visibility: hidden;" onclick="processInput({key: 'k'})"></button>
+    <button id="sub3" class="square-button" style="background-color: hsl(340, 80%, 80%); visibility: hidden;" onclick="processInput({key: 'j'})"></button>
     <button id="sub2" class="square-button" style="background-color: lightgrey;" onclick="processInput({key: 'h'})"></button>
-    <!-- <button id="sub3" class="square-button" style="background-color: salmon;"></button>
-    <button id="sub5" class="square-button" style="background-color: lightgreen;"></button>
-    <button id="sub7" class="square-button" style="background-color: mediumpurple;"></button>
-    <button id="sub11" class="square-button" style="background-color: khaki;"></button> -->
   </div>
   <script>
     let freq = initFreq;
-    let ctr2 = 0, ctr3 = 0, ctr5 = 0, ctr7 = 0, ctr11 = 0;
+    let ctr2 = 0, ctr3 = 0, ctr5 = 0, ctr7 = 0, ctr11 = 0, ctr13 = 0;
     async function playSound() {
       await csound.inputMessage(`i 1 0 30 ${freq.toFixed(2)} 4`);
     }
     async function updateEquation() {
       fact = ""
+      if (ctr13 != 0) {
+        if (fact != "") fact += " \\cdot ";
+        fact += "{ \\color{lightskyblue} 13";
+        if (ctr13 != 1) fact += `^{${ctr13}}`;
+        fact += " } "
+      }
       if (ctr11 != 0) {
         if (fact != "") fact += " \\cdot ";
         fact += "{ \\color{khaki} 11";
@@ -100,7 +108,7 @@ endin
       }
       if (ctr7 != 0) {
         if (fact != "") fact += " \\cdot ";
-        fact += "{ \\color{mediumpurple} 7";
+        fact += "{ \\color{plum} 7";
         if (ctr7 != 1) fact += `^{${ctr7}}`;
         fact += " } "
       }
@@ -124,7 +132,7 @@ endin
       }
       if (fact == "")
         fact += "1";
-      eq = `$$ \\frac{${freq.toFixed(2)}}{${initFreq.toFixed(0)}} = ${fact} $$`;
+      eq = `$$ \\frac{${(freq/initFreq*dispFreq).toFixed(2)}}{${dispFreq.toFixed(0)}} = ${fact} $$`;
       element = document.getElementById("equation");
       element.innerHTML = eq;
       element.style.visibility = "hidden";
@@ -179,6 +187,14 @@ endin
       else if (event.key == ";") {
         freq *= 8.0/11.0;
         ctr11 -= 1; ctr2 += 3;
+      }
+      else if (event.key == "q") {
+        freq *= 13.0/8.0;
+        ctr13 += 1; ctr2 -= 3;
+      }
+      else if (event.key == "p") {
+        freq *= 8.0/13.0;
+        ctr13 -= 1; ctr2 += 3;
       }
       await playSound();
       await updateEquation();
